@@ -31,16 +31,15 @@
                 }
             </dl>
         </div>
+
         <div class="portrait">
-            @* <img src="@SiteData.ProfileImage" alt="Portrait of @SiteData.Name" width="380" height="380" /> *@
             <img src="~/images/Professional.png" alt="Portrait of @SiteData.Name" width="380" height="580" />
-            <span class="badge">Open to projects</span>
+            @* <span class="badge">Open to projects</span> *@
         </div>
     </div>
 </section>
 
-
-
+<!--About Section-->
 <section id="about" class="section">
     <div class="wrap">
         <p class="eyebrow">About</p>
@@ -119,69 +118,10 @@
     </div>
 </section>
 
-
-@* <section id="about" class="section">
-    <div class="wrap">
-        <p class="eyebrow">About</p>
-        <h2>Software Engineer</h2>
-        <p class="muted about-text">@SiteData.About</p>
-
-        <div class="grid-2 about-grid">
-            <div>
-                <h3 class="sub">Experience</h3>
-                <ol class="timeline">
-                    @foreach (var j in SiteData.Jobs)
-                    {
-                        <li>
-                            <p class="when">@j.Period</p>
-                            <h4>@j.Role, @j.Company</h4>
-                            <ul class="points">
-                                @foreach (var pt in j.Points)
-                                {
-                                    <li>@pt</li>
-                                }
-                            </ul>
-                        </li>
-                    }
-                </ol>
-            </div>
-            <div>
-                <h3 class="sub">Skills</h3>
-                <dl class="skills">
-                    @foreach (var g in SiteData.Skills)
-                    {
-                        <div>
-                            <dt>@g.Name</dt>
-                            <dd>@string.Join(", ", g.Items)</dd>
-                        </div>
-                    }
-                </dl>
-                <h3 class="sub">Education</h3>
-                @foreach (var e in SiteData.Education)
-                {
-                    <div class="edu">
-                        <h4>@e.Degree</h4>
-                        <p class="muted">@e.School, @e.Period, @e.Score</p>
-                    </div>
-                }
-                <h3 class="sub">Certifications</h3>
-                <ul class="points">
-                    @foreach (var c in SiteData.Certifications)
-                    {
-                        <li>@c</li>
-                    }
-                </ul>
-            </div>
-        </div>
-    </div>
-</section> *@
-
-
 <!--Project Section-->
-<section id="project" class="section">
+@* <section id="project" class="section">
     <div class="wrap">
         <p class="eyebrow">Project</p>
-        @* <h2>Selected projects</h2> *@
         <div class="grid-2">
             @foreach (var p in SiteData.Projects)
             {
@@ -198,6 +138,66 @@
                     <p class="stack">@string.Join(" / ", p.Stack)</p>
                 </article>
             }
+        </div>
+    </div>
+</section> *@
+
+
+<!-- Project Section -->
+<section id="project" class="section">
+    <div class="wrap">
+        <p class="eyebrow">Projects</p>
+        @* <h2>Selected Projects</h2> *@
+
+        <div class="project-slider">
+
+            <div class="project-slides">
+                @for (int i = 0; i < SiteData.Projects.Length; i++)
+                {
+                    var p = SiteData.Projects[i];
+
+                    <article class="card project-slide @(i == 0 ? "active" : "")">
+
+                        <p class="kind">@p.Kind</p>
+
+                        <h3>@p.Name</h3>
+
+                        <p class="muted">@p.Summary</p>
+
+                        <ul class="points">
+                            @foreach (var h in p.Highlights)
+                            {
+                                <li>@h</li>
+                            }
+                        </ul>
+
+                        <p class="stack">
+                            @string.Join(" / ", p.Stack)
+                        </p>
+
+                    </article>
+                }
+            </div>
+
+            <!-- Slider Controls -->
+            <div class="project-controls">
+
+                <button type="button" id="prevProject"
+                        class="slider-btn"
+                        aria-label="Previous project">
+                    &#8592;
+                </button>
+
+                <span id="projectCounter">1 / @SiteData.Projects.Length</span>
+
+                <button type="button" id="nextProject"
+                        class="slider-btn"
+                        aria-label="Next project">
+                    &#8594;
+                </button>
+
+            </div>
+
         </div>
     </div>
 </section>
@@ -266,3 +266,40 @@
         </form>
     </div>
 </section>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const slides = document.querySelectorAll(".project-slide");
+        const prevBtn = document.getElementById("prevProject");
+        const nextBtn = document.getElementById("nextProject");
+        const counter = document.getElementById("projectCounter");
+
+        if (!slides.length || !prevBtn || !nextBtn) return;
+
+        let currentIndex = 0;
+
+        function showProject(index) {
+
+            slides.forEach(slide => {
+                slide.classList.remove("active");
+            });
+
+            slides[index].classList.add("active");
+
+            counter.textContent = `${index + 1} / ${slides.length}`;
+        }
+
+        nextBtn.addEventListener("click", function () {
+            currentIndex = (currentIndex + 1) % slides.length;
+            showProject(currentIndex);
+        });
+
+        prevBtn.addEventListener("click", function () {
+            currentIndex = (currentIndex - 1 + slides.length) % slides.length;
+            showProject(currentIndex);
+        });
+
+    });
+</script>
